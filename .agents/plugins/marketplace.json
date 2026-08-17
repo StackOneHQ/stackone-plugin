@@ -1,0 +1,20 @@
+{
+  "name": "stackone",
+  "interface": {
+    "displayName": "StackOne"
+  },
+  "plugins": [
+    {
+      "name": "stackone",
+      "source": {
+        "source": "local",
+        "path": "./"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

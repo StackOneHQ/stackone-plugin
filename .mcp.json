@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "stackone": {
+      "type": "http",
+      "url": "https://mcp.stackone.com/mcp",
+      "note": "StackOne hosted MCP server. OAuth 2.1 with dynamic client registration: on first use you sign in with your StackOne account (idp-api.stackone.com). Tools: stackone_search_actions, stackone_execute_action, stackone_list_accounts, stackone_submit_feedback."
+    }
+  }
+}

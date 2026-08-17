@@ -1,0 +1,31 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "stackone",
+  "description": "StackOne hosted MCP connector.",
+  "owner": {
+    "name": "StackOne",
+    "email": "engineering@stackone.com"
+  },
+  "plugins": [
+    {
+      "name": "stackone",
+      "source": "./",
+      "description": "Give AI agents 30,000+ safe, token-optimized actions across Workday, SAP, Oracle + hundreds more.",
+      "version": "1.0.0",
+      "author": {
+        "name": "StackOne",
+        "email": "engineering@stackone.com",
+        "url": "https://www.stackone.com"
+      },
+      "homepage": "https://docs.stackone.com",
+      "license": "MIT",
+      "keywords": [
+        "stackone",
+        "stackone mcp",
+        "stackone connectors",
+        "stackone actions"
+      ],
+      "category": "integrations"
+    }
+  ]
+}

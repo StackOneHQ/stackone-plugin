@@ -1,0 +1,42 @@
+{
+  "name": "stackone",
+  "version": "1.0.0",
+  "description": "Give AI agents 30,000+ safe, token-optimized actions across Workday, SAP, Oracle + hundreds more.",
+  "author": {
+    "name": "StackOne",
+    "email": "engineering@stackone.com",
+    "url": "https://www.stackone.com"
+  },
+  "homepage": "https://docs.stackone.com",
+  "repository": "https://github.com/StackOneHQ/stackone-plugin",
+  "license": "MIT",
+  "keywords": [
+    "stackone",
+    "stackone mcp",
+    "stackone connectors",
+    "stackone actions"
+  ],
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "StackOne",
+    "shortDescription": "Give AI agents 30,000+ safe, token-optimized actions across Workday, SAP, Oracle + hundreds more.",
+    "longDescription": "StackOne is the AI Agent Integration Platform. Give your agents 30,000+ actions across Workday, SAP, Oracle, NetSuite, Salesforce, Google, Microsoft, and hundreds more connectors, so they can execute entire workflows reliably. Tool calling is safe and token-optimized: Defender, StackOne's safety model, screens every call in real time; Advanced Tool Search (ranked #1 for tool search accuracy on public benchmarks) and StackOne Query keep token usage and latency low. StackOne handles authentication, rate limiting, and multi-tenancy across every connector.",
+    "developerName": "StackOne",
+    "category": "Productivity",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://www.stackone.com",
+    "privacyPolicyURL": "https://www.stackone.com/terms/privacy-policy/",
+    "termsOfServiceURL": "https://www.stackone.com/terms/saas-terms/",
+    "logo": "./assets/logo.png",
+    "composerIcon": "./assets/logo.png",
+    "brandColor": "#000000",
+    "defaultPrompt": [
+      "Use StackOne to list the accounts I have connected.",
+      "Use StackOne to find and run the action that creates a Jira issue.",
+      "Use StackOne to pull my open Workday time-off requests."
+    ]
+  }
+}

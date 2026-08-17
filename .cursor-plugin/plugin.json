@@ -1,0 +1,28 @@
+{
+  "name": "stackone",
+  "version": "1.0.0",
+  "description": "Give AI agents 30,000+ safe, token-optimized actions across Workday, SAP, Oracle + hundreds more.",
+  "author": {
+    "name": "StackOne",
+    "email": "engineering@stackone.com",
+    "url": "https://www.stackone.com"
+  },
+  "homepage": "https://docs.stackone.com",
+  "repository": "https://github.com/StackOneHQ/stackone-plugin",
+  "license": "MIT",
+  "keywords": [
+    "stackone",
+    "stackone mcp",
+    "stackone connectors",
+    "stackone actions"
+  ],
+  "displayName": "StackOne",
+  "logo": "assets/logo.png",
+  "category": "integrations",
+  "tags": [
+    "stackone",
+    "integrations",
+    "mcp"
+  ],
+  "mcpServers": "./mcp.json"
+}
