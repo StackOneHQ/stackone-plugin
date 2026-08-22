@@ -1,0 +1,13 @@
+{
+  "name": "stackone",
+  "description": "Give AI agents 30,000+ safe, token-optimized actions across Workday, SAP, Oracle + hundreds more. StackOne's hosted MCP server: search and run actions across every connector linked to your account, with Defender screening every call.",
+  "category": "development",
+  "source": {
+    "source": "url",
+    "url": "https://github.com/StackOneHQ/stackone-plugin.git",
+    "sha": "0000000000000000000000000000000000000000"
+  },
+  "homepage": "https://github.com/StackOneHQ/stackone-plugin",
+  "keywords": ["stackone", "stackone mcp", "stackone connectors"],
+  "domains": ["stackone.com", "docs.stackone.com", "app.stackone.com"]
+}

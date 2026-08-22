@@ -1,0 +1,137 @@
+name: validate
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Third-party validators are pinned to commits. Bump deliberately.
+env:
+  CURSOR_PLUGINS_SHA: c7f203457c16815379130697c41e74fd202e9978   # github.com/cursor/plugins (schemas/plugin.schema.json)
+  XAI_MARKETPLACE_SHA: e5c73400a2ec55fa0abd1efbc8908a5aa801dcce  # github.com/xai-org/plugin-marketplace (scripts/)
+  CLAUDE_CODE_VERSION: 2.1.234                                    # npm @anthropic-ai/claude-code
+  CODEX_VERSION: 0.147.0                                          # npm @openai/codex
+
+jobs:
+  manifests:
+    name: manifests agree with each other
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: python3 scripts/check-manifests.py
+
+  claude-code:
+    name: Claude Code (claude plugin validate + install from source)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+      - run: npm install -g "@anthropic-ai/claude-code@${CLAUDE_CODE_VERSION}"
+      - name: validate manifests with the Claude Code CLI
+        run: |
+          claude plugin validate .claude-plugin/plugin.json
+          claude plugin validate .claude-plugin/marketplace.json
+      - name: install from this repo as a marketplace and confirm the MCP server is detected
+        env:
+          CLAUDE_CONFIG_DIR: ${{ runner.temp }}/claude
+        run: |
+          claude plugin marketplace add "$PWD"
+          claude plugin install stackone@stackone
+          claude plugin details stackone@stackone | tee details.txt
+          grep -q "MCP servers (1)" details.txt
+          grep -q "Skills (0)" details.txt
+
+  codex:
+    name: Codex / ChatGPT (install from source)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+      - run: npm install -g "@openai/codex@${CODEX_VERSION}"
+      - name: add this repo as a Codex marketplace, install, confirm the MCP server registers
+        env:
+          CODEX_HOME: ${{ runner.temp }}/codex
+        run: |
+          mkdir -p "$CODEX_HOME"
+          codex plugin marketplace add "$PWD"
+          codex plugin list | grep -q "stackone@stackone"
+          codex plugin add stackone@stackone
+          codex mcp list | tee mcp.txt
+          grep -E "^stackone\s+https://mcp\.stackone\.com/mcp" mcp.txt
+
+  cursor:
+    name: Cursor (schema from cursor/plugins)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: cursor/plugins
+          ref: ${{ env.CURSOR_PLUGINS_SHA }}
+          path: .upstream/cursor-plugins
+          sparse-checkout: schemas
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+      - run: npm install --no-save ajv@8.20.0 ajv-formats@3.0.1
+      - run: node scripts/validate-cursor.mjs .upstream/cursor-plugins
+
+  grok-build:
+    name: Grok Build (xai-org/plugin-marketplace extractor + catalog rules)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: xai-org/plugin-marketplace
+          ref: ${{ env.XAI_MARKETPLACE_SHA }}
+          path: .upstream/xai-plugin-marketplace
+          sparse-checkout: scripts
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+      - run: python3 scripts/validate-grok.py .upstream/xai-plugin-marketplace
+      - name: xAI validate-catalog.py accepts our marketplace file
+        run: python3 .upstream/xai-plugin-marketplace/scripts/validate-catalog.py
+
+  mcp-endpoint:
+    name: MCP endpoint is live with OAuth discovery
+    runs-on: ubuntu-latest
+    steps:
+      - name: initialize without a token returns 401 + resource metadata
+        run: |
+          set -euo pipefail
+          hdrs=$(mktemp)
+          code=$(curl -s -o /dev/null -D "$hdrs" -w '%{http_code}' -X POST https://mcp.stackone.com/mcp \
+            -H 'content-type: application/json' -H 'accept: application/json, text/event-stream' \
+            -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"ci","version":"0"}}}')
+          test "$code" = "401"
+          grep -qi 'www-authenticate: Bearer resource_metadata=' "$hdrs"
+      - name: protected resource metadata points at an AS with DCR + PKCE
+        run: |
+          set -euo pipefail
+          prm=$(curl -sf https://mcp.stackone.com/.well-known/oauth-protected-resource)
+          echo "$prm" | python3 -c 'import json,sys; d=json.load(sys.stdin); assert d["resource"]=="https://mcp.stackone.com/mcp"; assert d["authorization_servers"], d'
+          as=$(echo "$prm" | python3 -c 'import json,sys; print(json.load(sys.stdin)["authorization_servers"][0])')
+          curl -sf "$as/.well-known/oauth-authorization-server" | python3 -c 'import json,sys; d=json.load(sys.stdin); assert d.get("registration_endpoint"), "no DCR"; assert "S256" in d.get("code_challenge_methods_supported",[]), "no PKCE S256"; print("ok:", d["issuer"])'

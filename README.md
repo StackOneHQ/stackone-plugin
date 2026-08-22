@@ -12,9 +12,9 @@ StackOne is the AI Agent Integration Platform. Tool calling is safe and token-op
 |---|---|
 | **Grok Build** | `/marketplace` → find **stackone** → `i`. Or `grok plugin install stackone --trust`. Then `/mcp` → **stackone** → `i` to sign in. |
 | **Cursor** | Marketplace → **StackOne** → Install, or `/add-plugin stackone`. Sign in when Cursor prompts. |
-| **Grok Bot** | Settings → Plugins → Marketplace → **StackOne** → Add. |
+| **Grok Bot** | Settings → Plugins → Marketplace → **StackOne** → Add (available once the Cursor Marketplace listing is approved; Grok Bot uses the Cursor plugin catalog). |
 | **Claude Code** | `/plugin marketplace add StackOneHQ/stackone-plugin` then `/plugin install stackone@stackone`. |
-| **Codex / ChatGPT desktop** | `codex plugin marketplace add StackOneHQ/stackone-plugin` then `codex plugin add stackone`, or pick it in the Plugins Directory. |
+| **Codex / ChatGPT desktop** | `codex plugin marketplace add StackOneHQ/stackone-plugin` then `codex plugin add stackone`. The Plugins Directory listing follows once OpenAI review completes. |
 | **Any MCP client** | Add `https://mcp.stackone.com/mcp` as a remote (Streamable HTTP) server. |
 
 You need a StackOne account with at least one connected integration. Create one at [app.stackone.com](https://app.stackone.com).
@@ -61,6 +61,10 @@ stackone-plugin/
 ├── assets/logo.png, logo.svg
 └── scripts/check-manifests.py
 ```
+
+## Releases
+
+Versions are cut by release-please from conventional commits on `main`. A release bumps `version` in every manifest at once; the Grok Build marketplace re-pins to the new commit automatically, Cursor and the Claude community catalog pick it up on their own schedule.
 
 ## Links
 
