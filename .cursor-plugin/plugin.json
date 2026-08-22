@@ -4,8 +4,7 @@
   "description": "Give AI agents 30,000+ safe, token-optimized actions across Workday, SAP, Oracle + hundreds more.",
   "author": {
     "name": "StackOne",
-    "email": "engineering@stackone.com",
-    "url": "https://www.stackone.com"
+    "email": "engineering@stackone.com"
   },
   "homepage": "https://docs.stackone.com",
   "repository": "https://github.com/StackOneHQ/stackone-plugin",
