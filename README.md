@@ -52,15 +52,19 @@ tested in ChatGPT. Building a ZIP does not submit or publish it.
 The native entrypoint (`stackone_open`) opens the StackOne management app from a global
 sidebar or a thread:
 
-- **Accounts:** search linked accounts, review connector/profile/status details, and reconnect an account.
+- **Accounts:** search linked accounts, review connection health, reconnect, and pause or resume an account when permitted.
 - **Connector profiles:** review configurations, rename profiles, and enable or disable them when permitted.
+- **Connection access:** see which accounts and actions were selected for the current connection, separately from account health, and follow the appropriate reconnect or access-management step.
 - **Link account:** choose an allowed profile, enter owner details, complete authentication in the hosted StackOne Hub, then refresh the list.
-- **Full configuration:** create profiles and edit credentials in the existing hosted StackOne dashboard editor.
+- **Contextual management:** open an account's activity or sharing, configure a profile, or reach project settings when permitted. Creation, credentials and broader administration use the existing hosted StackOne dashboard.
 
 Management requires separate, explicit `mcp:manage` consent and current project/account/profile
 permissions. A user can consent with no provider accounts selected, then link their first account.
 Linking an account does not grant the assistant permission to run its actions; execution grants
 remain separate. Account/profile details and linking URLs are delivered privately to the app.
+Controls follow the user's current account and profile permissions. Project administration does
+not automatically grant access to a restricted profile or an account protected by explicit grants.
+Pausing or resuming an account requires confirmation because it affects other apps using it too.
 
 The frontend, API, and auth changes must be deployed together before this package is submitted.
 See [OpenAI's extension documentation](https://developers.openai.com/plugins/build/extensions)
