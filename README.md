@@ -49,22 +49,29 @@ The native app variant uses `python3 scripts/build-chatgpt-plugin.py --extension
 Keep the MCP-only variant for the current submission until that endpoint has been deployed and
 tested in ChatGPT. Building a ZIP does not submit or publish it.
 
-The native entrypoint (`stackone_open`) is declared by the MCP server. It opens the existing
-grant-scoped account and action explorer from a global sidebar or a thread. Users can search
-action descriptions, save useful actions locally, and copy task prompts that exclude account
-IDs, inputs and results. Simple read actions can run in the app; writes and complex inputs use
-guided chat with confirmation. Project tool-mode policy still applies, with guided chat when
-individual tools are required. The same OAuth grant and action execution path apply.
-Account linking, account administration and connector
-configuration are future dashboard work requiring explicit management consent and live
-per-resource authorization; the current extension does not expose those operations.
+The native entrypoint (`stackone_open`) opens the StackOne management app from a global
+sidebar or a thread:
+
+- **Accounts:** search linked accounts, review connector/profile/status details, and reconnect an account.
+- **Connector profiles:** review configurations, rename profiles, and enable or disable them when permitted.
+- **Link account:** choose an allowed profile, enter owner details, complete authentication in the hosted StackOne Hub, then refresh the list.
+- **Full configuration:** create profiles and edit credentials in the existing hosted StackOne dashboard editor.
+
+Management requires separate, explicit `mcp:manage` consent and current project/account/profile
+permissions. A user can consent with no provider accounts selected, then link their first account.
+Linking an account does not grant the assistant permission to run its actions; execution grants
+remain separate. Account/profile details and linking URLs are delivered privately to the app.
+
+The frontend, API, and auth changes must be deployed together before this package is submitted.
+See [OpenAI's extension documentation](https://developers.openai.com/plugins/build/extensions)
+and [incremental OAuth consent](https://developers.openai.com/plugins/build/auth).
 
 ## Authentication and data
 
 - **Auth:** OAuth 2.1 with PKCE and dynamic client registration against `https://idp-api.stackone.com/api/auth`. On first use your host opens the StackOne sign-in page. No API keys or secrets live in this repo.
-- **Scopes:** `mcp`, `offline_access` (refresh tokens so you sign in once).
-- **Network endpoints this plugin calls:** `mcp.stackone.com` (the MCP server) and `idp-api.stackone.com` (sign-in). Nothing else.
-- **What runs locally:** the submission package contains manifests and listing assets. The optional extension loads a sandboxed MCP App from the server; saved connector/action IDs stay in browser storage. No account IDs, inputs or results are saved by that preference.
+- **Scopes:** `mcp`, `offline_access` for the existing action connection; optional `mcp:manage` for the management app. Opening management requests additional consent when needed.
+- **Endpoints:** `mcp.stackone.com` (MCP) and `idp-api.stackone.com` (sign-in). The management app opens hosted linking and configuration on `app.stackone.com`.
+- **What runs locally:** the submission package contains manifests and listing assets. The extension loads a sandboxed management app from the server; it uses bounded MCP tools rather than dashboard cookies or direct API requests. Credentials stay in the hosted authentication/configuration flows.
 - **Data:** actions run against the SaaS accounts you have linked in StackOne, under the permissions of that link. Privacy policy: <https://www.stackone.com/terms/privacy-policy/>. Terms: <https://www.stackone.com/terms/saas-terms/>.
 
 ## Repository layout

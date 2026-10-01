@@ -28,6 +28,21 @@ def main():
         mcp["mcpServers"]["stackone"]["url"] = "https://mcp.stackone.com/mcp?extension=on&tool-mode=search_execute"
         mcp["mcpServers"]["stackone"]["note"] += " Native app entrypoint: stackone_open."
         files[".mcp.json"] = (json.dumps(mcp, indent=2) + "\n").encode()
+        manifest = json.loads(files[".codex-plugin/plugin.json"])
+        manifest["interface"]["shortDescription"] = "Manage your connections"
+        manifest["interface"]["longDescription"] = (
+            "Manage StackOne connector profiles and linked accounts in ChatGPT. "
+            "Search accounts, review connection status, rename or enable profiles when permitted, "
+            "and link or reconnect accounts through StackOne's hosted authentication flow. "
+            "Full credential configuration opens the existing StackOne dashboard. "
+            "Management requires explicit consent and follows your current StackOne permissions."
+        )
+        manifest["interface"]["defaultPrompt"] = [
+            "Open StackOne to review my linked accounts.",
+            "Open my StackOne connector profiles.",
+            "Open StackOne so I can link an account.",
+        ]
+        files[".codex-plugin/plugin.json"] = (json.dumps(manifest, indent=2) + "\n").encode()
 
     suffix = "-extension" if args.extension else ""
     destination = root / "dist" / f"stackone-chatgpt{suffix}.zip"
