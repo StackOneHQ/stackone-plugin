@@ -33,15 +33,38 @@ The server exposes four tools:
 Example prompts once connected:
 
 - "List the accounts I have connected through StackOne."
-- "Use StackOne to find my open Workday time-off requests."
-- "Create a Jira issue for the bug we just discussed, via StackOne."
+- "Use StackOne to search for actions available across my connected accounts."
+- "Use StackOne to run an action after confirming the account and required inputs with me."
+
+## ChatGPT extension and submission ZIPs
+
+Build the MCP-only submission with `python3 scripts/build-chatgpt-plugin.py`. It writes
+`dist/stackone-chatgpt.zip` with the OpenAI manifest, MCP configuration and listing assets.
+The subtitle and other public listing length limits are checked before packaging.
+
+The native app variant uses `python3 scripts/build-chatgpt-plugin.py --extension` and writes
+`dist/stackone-chatgpt-extension.zip`. Its server URL is
+`https://mcp.stackone.com/mcp?extension=on&tool-mode=search_execute`. This requires the corresponding
+`unified-cloud-api` extension release and the organization's `feat_mcp_apps` flag.
+Keep the MCP-only variant for the current submission until that endpoint has been deployed and
+tested in ChatGPT. Building a ZIP does not submit or publish it.
+
+The native entrypoint (`stackone_open`) is declared by the MCP server. It opens the existing
+grant-scoped account and action explorer from a global sidebar or a thread. Users can search
+action descriptions, save useful actions locally, and copy task prompts that exclude account
+IDs, inputs and results. Simple read actions can run in the app; writes and complex inputs use
+guided chat with confirmation. Project tool-mode policy still applies, with guided chat when
+individual tools are required. The same OAuth grant and action execution path apply.
+Account linking, account administration and connector
+configuration are future dashboard work requiring explicit management consent and live
+per-resource authorization; the current extension does not expose those operations.
 
 ## Authentication and data
 
 - **Auth:** OAuth 2.1 with PKCE and dynamic client registration against `https://idp-api.stackone.com/api/auth`. On first use your host opens the StackOne sign-in page. No API keys or secrets live in this repo.
 - **Scopes:** `mcp`, `offline_access` (refresh tokens so you sign in once).
 - **Network endpoints this plugin calls:** `mcp.stackone.com` (the MCP server) and `idp-api.stackone.com` (sign-in). Nothing else.
-- **What runs locally:** nothing. No hooks, no scripts, no bundled binaries. The plugin is a manifest and a server URL.
+- **What runs locally:** the submission package contains manifests and listing assets. The optional extension loads a sandboxed MCP App from the server; saved connector/action IDs stay in browser storage. No account IDs, inputs or results are saved by that preference.
 - **Data:** actions run against the SaaS accounts you have linked in StackOne, under the permissions of that link. Privacy policy: <https://www.stackone.com/terms/privacy-policy/>. Terms: <https://www.stackone.com/terms/saas-terms/>.
 
 ## Repository layout

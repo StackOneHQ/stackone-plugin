@@ -45,6 +45,12 @@ if manifests[".cursor-plugin/plugin.json"].get("mcpServers") != "./mcp.json":
 if manifests[".codex-plugin/plugin.json"].get("mcpServers") != "./.mcp.json":
     errors.append(".codex-plugin/plugin.json must point mcpServers at ./.mcp.json")
 
+interface = manifests[".codex-plugin/plugin.json"].get("interface", {})
+for key, limit in (("displayName", 30), ("shortDescription", 30), ("developerName", 80), ("longDescription", 4000)):
+    value = interface.get(key, "")
+    if not isinstance(value, str) or not value.strip() or len(value) > limit:
+        errors.append(f".codex-plugin/plugin.json: interface.{key} must contain 1–{limit} characters")
+
 for path, mk in markets.items():
     entry = mk["plugins"][0]
     if entry.get("name") != ref["name"]:

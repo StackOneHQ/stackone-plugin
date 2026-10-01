@@ -26,6 +26,12 @@ jobs:
         with:
           persist-credentials: false
       - run: python3 scripts/check-manifests.py
+      - name: build both ChatGPT submission packages
+        run: |
+          python3 scripts/build-chatgpt-plugin.py
+          python3 scripts/build-chatgpt-plugin.py --extension
+          python3 -m zipfile --test dist/stackone-chatgpt.zip
+          python3 -m zipfile --test dist/stackone-chatgpt-extension.zip
 
   claude-code:
     name: Claude Code (claude plugin validate + install from source)
