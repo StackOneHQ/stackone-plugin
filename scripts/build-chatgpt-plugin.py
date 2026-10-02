@@ -33,7 +33,8 @@ def main():
         manifest["interface"]["longDescription"] = (
             "Manage StackOne connector profiles and linked accounts in ChatGPT. "
             "Search accounts, review connection status, rename or enable profiles when permitted, "
-            "and link or reconnect accounts through StackOne's hosted authentication flow. "
+            "and link or reconnect accounts through the same StackOne Hub used by OAuth, embedded in ChatGPT. "
+            "Provider sign-in may require a popup. "
             "Full credential configuration opens the existing StackOne dashboard. "
             "Management requires explicit consent and follows your current StackOne permissions."
         )
