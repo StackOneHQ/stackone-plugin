@@ -42,6 +42,26 @@ Example prompts once connected:
 Build the MCP-only submission with `python3 scripts/build-chatgpt-plugin.py`. It writes
 `dist/stackone-chatgpt.zip` with the OpenAI manifest, MCP configuration and listing assets.
 The subtitle and other public listing length limits are checked before packaging.
+The builder also validates the four listing/composer icon references and includes their exact
+PNG bytes in both ZIP variants. Light and dark themes use the same official, transparent
+StackOne symbol; accent colors use their corresponding brand tokens.
+
+### Import the branded package
+
+Upload the generated `dist/stackone-chatgpt.zip` through the plugin ZIP import flow. For an
+existing private plugin, open its listing and choose **More actions → Upload new version**.
+The full package includes `.codex-plugin/plugin.json` and every referenced asset. Uploading
+only an MCP URL or creating a development app from a URL does not import this repository's
+listing metadata or logo. Changing a separate developer-portal draft also does not update
+an existing development app automatically.
+
+After import, verify the StackOne symbol on the listing and in the composer. Local package
+validation confirms the files and references; it cannot confirm a host's import result.
+See [OpenAI's icon and import requirements](https://developers.openai.com/plugins/deploy/submission#icons-and-screenshots).
+
+For a branding-only refresh, use the MCP-only ZIP. Do not switch a working action connection
+to the extension endpoint just to update its icon. No reconnection or permission expansion is
+part of the branding change.
 
 The native app variant uses `python3 scripts/build-chatgpt-plugin.py --extension` and writes
 `dist/stackone-chatgpt-extension.zip`. Its server URL is

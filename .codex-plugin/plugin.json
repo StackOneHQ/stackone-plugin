@@ -32,11 +32,14 @@
     "termsOfServiceURL": "https://www.stackone.com/terms/saas-terms/",
     "logo": "./assets/logo.png",
     "composerIcon": "./assets/logo.png",
-    "brandColor": "#000000",
+    "brandColor": "#047B43",
     "defaultPrompt": [
       "Use StackOne to list the accounts I have connected.",
       "Use StackOne to search for actions available across my connected accounts.",
       "Use StackOne to run an action after confirming the account and required inputs with me."
-    ]
+    ],
+    "logoDark": "./assets/logo.png",
+    "composerIconDark": "./assets/logo.png",
+    "brandColorDark": "#76D6AE"
   }
 }

@@ -26,6 +26,7 @@ jobs:
         with:
           persist-credentials: false
       - run: python3 scripts/check-manifests.py
+      - run: python3 -m unittest discover -s scripts -p "test_*.py"
       - name: build both ChatGPT submission packages
         run: |
           python3 scripts/build-chatgpt-plugin.py

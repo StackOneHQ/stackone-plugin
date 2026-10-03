@@ -6,6 +6,7 @@ times. This keeps name, version, description, MCP URL and legal URLs identical
 across all of them, and is what CI runs.
 """
 import json, sys, pathlib
+from branding_assets import branding_files
 
 root = pathlib.Path(__file__).resolve().parent.parent
 def load(p): return json.loads((root / p).read_text())
@@ -50,6 +51,11 @@ for key, limit in (("displayName", 30), ("shortDescription", 30), ("developerNam
     value = interface.get(key, "")
     if not isinstance(value, str) or not value.strip() or len(value) > limit:
         errors.append(f".codex-plugin/plugin.json: interface.{key} must contain 1–{limit} characters")
+
+try:
+    branding_files(interface, lambda name: (root / name).read_bytes())
+except ValueError as error:
+    errors.append(str(error))
 
 for path, mk in markets.items():
     entry = mk["plugins"][0]

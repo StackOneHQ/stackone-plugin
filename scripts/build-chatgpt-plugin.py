@@ -8,6 +8,8 @@ import subprocess
 import sys
 from zipfile import ZIP_DEFLATED, ZipFile, ZipInfo
 
+from branding_assets import branding_files
+
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
@@ -21,7 +23,7 @@ def main():
 
     files = {
         name: (root / name).read_bytes()
-        for name in (".codex-plugin/plugin.json", ".mcp.json", "assets/logo.png", "assets/logo.svg", "LICENSE")
+        for name in (".codex-plugin/plugin.json", ".mcp.json", "assets/logo.svg", "LICENSE")
     }
     if args.extension:
         mcp = json.loads(files[".mcp.json"])
@@ -45,6 +47,10 @@ def main():
         ]
         files[".codex-plugin/plugin.json"] = (json.dumps(manifest, indent=2) + "\n").encode()
 
+    # Resolve assets from the final manifest, including extension-mode edits.
+    interface = json.loads(files[".codex-plugin/plugin.json"])["interface"]
+    files.update(branding_files(interface, lambda name: (root / name).read_bytes()))
+
     suffix = "-extension" if args.extension else ""
     destination = root / "dist" / f"stackone-chatgpt{suffix}.zip"
     destination.parent.mkdir(exist_ok=True)
@@ -54,6 +60,10 @@ def main():
             entry.compress_type = ZIP_DEFLATED
             entry.external_attr = 0o100644 << 16
             archive.writestr(entry, data)
+    with ZipFile(destination) as archive:
+        branding_files(interface, archive.read)
+        if archive.testzip() is not None:
+            raise ValueError("Plugin archive failed its integrity check")
     print(destination)
 
 
