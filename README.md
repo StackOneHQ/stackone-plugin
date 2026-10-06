@@ -65,14 +65,18 @@ part of the branding change.
 
 The native app variant uses `python3 scripts/build-chatgpt-plugin.py --extension` and writes
 `dist/stackone-chatgpt-extension.zip`. Its server URL is
-`https://mcp.stackone.com/mcp?extension=on&tool-mode=search_execute`. This requires the corresponding
+`https://mcp.stackone.com/mcp?extension=on&management-only=on`. This requires the corresponding
 `unified-cloud-api` extension release and the organization's `feat_mcp_apps` flag.
 Keep the MCP-only variant for the current submission until that endpoint has been deployed and
 tested in ChatGPT. Building a ZIP does not submit or publish it.
 
+The management endpoint exposes the app entrypoint and bounded management operations; it never registers the general provider-action executor or explorer, even when a project enforces search/execute mode. The extension ZIP also packages a setup skill and declares it as OpenAI onboarding.
+
 The native entrypoint (`stackone_open`) opens the StackOne management app from a global
 sidebar or a thread:
 
+- **Provider intent:** a known provider key such as `workday` opens the matching authorized accounts and profiles. Multiple profiles remain explicit choices. Unknown/unavailable providers do not silently open another provider. Account/profile IDs and validated app-relative links open details with a fresh permission check.
+- **Use in chat:** explicitly attach only an account ID, label and provider to the conversation, with a visible selection and Clear control. This does not grant actions.
 - **Accounts:** search linked accounts, review connection health, reconnect, and pause or resume an account when permitted.
 - **Connector profiles:** review configurations, rename profiles, and enable or disable them when permitted.
 - **Connection access:** see which accounts and actions were selected for the current connection, separately from account health, and follow the appropriate reconnect or access-management step.
@@ -91,10 +95,11 @@ The frontend, API, and auth changes must be deployed together before this packag
 The package selects the extension endpoint; the API serves the versioned UI, and the frontend
 hosts Hub. Updating or rebuilding this ZIP does not deploy those services.
 
-The ordinary Claude Code and other MCP-client installs still use the base MCP endpoint. Their
-manifest checks do not establish that the management UI works in Claude. Real ChatGPT and Claude
+Build the explicit Claude variant with `python3 scripts/build-chatgpt-plugin.py --extension --host claude`. It writes `dist/stackone-claude-extension.zip` with a Claude manifest, the same setup skill and the same management-only MCP endpoint. Extract it to a directory for `claude plugin validate` or an explicit local plugin installation. Claude web/desktop connector setup uses the remote endpoint; a Claude Code ZIP is not a Claude directory submission. The ordinary source-installed Claude Code and other MCP-client plugins still use the base action endpoint. Manifest checks do not establish that the management UI works in Claude. Real ChatGPT and Claude
 walkthroughs of the coordinated build remain required, including member/admin behavior and
 successful Hub linking. No full feature video of that build is available yet.
+
+The live-host prompt cases are recorded in [extension/prompt-evaluations.json](extension/prompt-evaluations.json). Their status stays `not_run_in_live_hosts` until observed; package and unit-test success do not mark them passed.
 
 See [OpenAI's extension documentation](https://developers.openai.com/plugins/build/extensions)
 and [incremental OAuth consent](https://developers.openai.com/plugins/build/auth).
@@ -104,7 +109,7 @@ and [incremental OAuth consent](https://developers.openai.com/plugins/build/auth
 - **Auth:** OAuth 2.1 with PKCE and dynamic client registration against `https://idp-api.stackone.com/api/auth`. On first use your host opens the StackOne sign-in page. No API keys or secrets live in this repo.
 - **Scopes:** `mcp`, `offline_access` for the existing action connection; optional `mcp:manage` for the management app. Opening management requests additional consent when needed.
 - **Endpoints:** `mcp.stackone.com` (MCP) and `idp-api.stackone.com` (sign-in). The management app embeds Hub from `app.stackone.com`; configuration links open the hosted dashboard.
-- **What runs locally:** the submission package contains manifests and listing assets. The extension loads a sandboxed management app from the server. Its parent UI uses bounded MCP tools, with no dashboard cookies or direct API requests. Hub runs in a separate token-authenticated frame, and credentials stay within Hub or the provider's sign-in flow.
+- **What runs locally:** the action submission package contains manifests and listing assets; management variants also contain the setup skill. The extension loads a sandboxed management app from the server. Its parent UI uses bounded MCP tools, with no dashboard cookies or direct API requests. Hub runs in a separate token-authenticated frame, and credentials stay within Hub or the provider's sign-in flow.
 - **Data:** actions run against the SaaS accounts you have linked in StackOne, under the permissions of that link. Privacy policy: <https://www.stackone.com/terms/privacy-policy/>. Terms: <https://www.stackone.com/terms/saas-terms/>.
 
 ## Repository layout

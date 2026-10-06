@@ -27,12 +27,14 @@ jobs:
           persist-credentials: false
       - run: python3 scripts/check-manifests.py
       - run: python3 -m unittest discover -s scripts -p "test_*.py"
-      - name: build both ChatGPT submission packages
+      - name: build action and management submission packages
         run: |
           python3 scripts/build-chatgpt-plugin.py
           python3 scripts/build-chatgpt-plugin.py --extension
+          python3 scripts/build-chatgpt-plugin.py --extension --host claude
           python3 -m zipfile --test dist/stackone-chatgpt.zip
           python3 -m zipfile --test dist/stackone-chatgpt-extension.zip
+          python3 -m zipfile --test dist/stackone-claude-extension.zip
 
   claude-code:
     name: Claude Code (claude plugin validate + install from source)
@@ -49,6 +51,11 @@ jobs:
         run: |
           claude plugin validate .claude-plugin/plugin.json
           claude plugin validate .claude-plugin/marketplace.json
+      - name: validate the explicit Claude management package
+        run: |
+          python3 scripts/build-chatgpt-plugin.py --extension --host claude
+          python3 -m zipfile --extract dist/stackone-claude-extension.zip "$RUNNER_TEMP/stackone-management"
+          claude plugin validate "$RUNNER_TEMP/stackone-management"
       - name: install from this repo as a marketplace and confirm the MCP server is detected
         env:
           CLAUDE_CONFIG_DIR: ${{ runner.temp }}/claude

@@ -17,7 +17,10 @@ def main():
         "--extension", action="store_true",
         help="Use the native extension endpoint; requires the API release and feat_mcp_apps.",
     )
+    parser.add_argument("--host", choices=("chatgpt", "claude"), default="chatgpt")
     args = parser.parse_args()
+    if args.host == "claude" and not args.extension:
+        parser.error("--host claude is an explicit management variant; use --extension too")
     root = Path(__file__).resolve().parent.parent
     subprocess.run([sys.executable, str(root / "scripts/check-manifests.py")], check=True)
 
@@ -27,10 +30,14 @@ def main():
     }
     if args.extension:
         mcp = json.loads(files[".mcp.json"])
-        mcp["mcpServers"]["stackone"]["url"] = "https://mcp.stackone.com/mcp?extension=on&tool-mode=search_execute"
-        mcp["mcpServers"]["stackone"]["note"] += " Native app entrypoint: stackone_open."
+        mcp["mcpServers"]["stackone"]["url"] = "https://mcp.stackone.com/mcp?extension=on&management-only=on"
+        mcp["mcpServers"]["stackone"]["note"] = "StackOne connection management. OAuth requires mcp, offline_access and mcp:manage. Entrypoint: stackone_open. No provider-action executor is exposed on this endpoint."
         files[".mcp.json"] = (json.dumps(mcp, indent=2) + "\n").encode()
         manifest = json.loads(files[".codex-plugin/plugin.json"])
+        manifest["description"] = "Manage StackOne connector profiles, linked accounts and account linking."
+        manifest["keywords"] = ["stackone", "connections", "connector profiles", "account linking"]
+        manifest["skills"] = "./skills/"
+        manifest["extensions"] = {"com.openai": {"onboardingSkill": "./skills/setup/SKILL.md"}}
         manifest["interface"]["shortDescription"] = "Manage your connections"
         manifest["interface"]["longDescription"] = (
             "Manage StackOne connector profiles and linked accounts in ChatGPT. "
@@ -43,16 +50,24 @@ def main():
         manifest["interface"]["defaultPrompt"] = [
             "Open StackOne to review my linked accounts.",
             "Open my StackOne connector profiles.",
-            "Open StackOne so I can link an account.",
+            "Connect Workday with StackOne.",
         ]
         files[".codex-plugin/plugin.json"] = (json.dumps(manifest, indent=2) + "\n").encode()
+        files["skills/setup/SKILL.md"] = (root / "extension/skills/setup/SKILL.md").read_bytes()
 
     # Resolve assets from the final manifest, including extension-mode edits.
     interface = json.loads(files[".codex-plugin/plugin.json"])["interface"]
     files.update(branding_files(interface, lambda name: (root / name).read_bytes()))
+    if args.host == "claude":
+        claude = json.loads((root / ".claude-plugin/plugin.json").read_text())
+        claude["description"] = "Manage StackOne connector profiles, linked accounts and account linking."
+        claude["keywords"] = ["stackone", "connections", "connector profiles", "account linking"]
+        claude["skills"] = "./skills/"
+        files[".claude-plugin/plugin.json"] = (json.dumps(claude, indent=2) + "\n").encode()
+        del files[".codex-plugin/plugin.json"]
 
     suffix = "-extension" if args.extension else ""
-    destination = root / "dist" / f"stackone-chatgpt{suffix}.zip"
+    destination = root / "dist" / f"stackone-{args.host}{suffix}.zip"
     destination.parent.mkdir(exist_ok=True)
     with ZipFile(destination, "w", compression=ZIP_DEFLATED) as archive:
         for name, data in sorted(files.items()):
