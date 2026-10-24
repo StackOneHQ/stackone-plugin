@@ -1,0 +1,10 @@
+{
+  "name": "stackone-plugin-validators",
+  "private": true,
+  "devDependencies": {
+    "@anthropic-ai/claude-code": "2.1.234",
+    "@openai/codex": "0.147.0",
+    "ajv": "8.20.0",
+    "ajv-formats": "3.0.1"
+  }
+}

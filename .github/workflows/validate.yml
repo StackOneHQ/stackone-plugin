@@ -10,12 +10,11 @@ on:
 permissions:
   contents: read
 
-# Third-party validators are pinned to commits. Bump deliberately.
+# Third-party validators are pinned: the upstream repos to commits here, the npm
+# packages in scripts/package-lock.json. Bump deliberately.
 env:
   CURSOR_PLUGINS_SHA: c7f203457c16815379130697c41e74fd202e9978   # github.com/cursor/plugins (schemas/plugin.schema.json)
   XAI_MARKETPLACE_SHA: e5c73400a2ec55fa0abd1efbc8908a5aa801dcce  # github.com/xai-org/plugin-marketplace (scripts/)
-  CLAUDE_CODE_VERSION: 2.1.234                                    # npm @anthropic-ai/claude-code
-  CODEX_VERSION: 0.147.0                                          # npm @openai/codex
 
 jobs:
   manifests:
@@ -37,7 +36,13 @@ jobs:
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 22
-      - run: npm install -g "@anthropic-ai/claude-code@${CLAUDE_CODE_VERSION}"
+      # Installed outside the checkout: installing the plugin from source copies the
+      # whole directory, so a node_modules in it would ship with the test install.
+      - name: install the CLIs pinned in scripts/package-lock.json
+        run: |
+          cp scripts/package.json scripts/package-lock.json "$RUNNER_TEMP"
+          (cd "$RUNNER_TEMP" && npm ci)
+          echo "$RUNNER_TEMP/node_modules/.bin" >> "$GITHUB_PATH"
       - name: validate manifests with the Claude Code CLI
         run: |
           claude plugin validate .claude-plugin/plugin.json
@@ -62,7 +67,13 @@ jobs:
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 22
-      - run: npm install -g "@openai/codex@${CODEX_VERSION}"
+      # Installed outside the checkout: installing the plugin from source copies the
+      # whole directory, so a node_modules in it would ship with the test install.
+      - name: install the CLIs pinned in scripts/package-lock.json
+        run: |
+          cp scripts/package.json scripts/package-lock.json "$RUNNER_TEMP"
+          (cd "$RUNNER_TEMP" && npm ci)
+          echo "$RUNNER_TEMP/node_modules/.bin" >> "$GITHUB_PATH"
       - name: add this repo as a Codex marketplace, install, confirm the MCP server registers
         env:
           CODEX_HOME: ${{ runner.temp }}/codex
@@ -91,7 +102,8 @@ jobs:
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 22
-      - run: npm install --no-save ajv@8.20.0 ajv-formats@3.0.1
+      - run: npm ci
+        working-directory: scripts
       - run: node scripts/validate-cursor.mjs .upstream/cursor-plugins
 
   grok-build:
