@@ -35,7 +35,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: 22
+          node-version-file: .nvmrc
       # Installed outside the checkout: installing the plugin from source copies the
       # whole directory, so a node_modules in it would ship with the test install.
       - name: install the CLIs pinned in scripts/package-lock.json
@@ -66,7 +66,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: 22
+          node-version-file: .nvmrc
       # Installed outside the checkout: installing the plugin from source copies the
       # whole directory, so a node_modules in it would ship with the test install.
       - name: install the CLIs pinned in scripts/package-lock.json
@@ -101,7 +101,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: 22
+          node-version-file: .nvmrc
       - run: npm ci
         working-directory: scripts
       - run: node scripts/validate-cursor.mjs .upstream/cursor-plugins
