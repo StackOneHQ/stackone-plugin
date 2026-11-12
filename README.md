@@ -38,7 +38,7 @@ Example prompts once connected:
 
 ## Authentication and data
 
-- **Auth:** OAuth 2.1 with PKCE and dynamic client registration against `https://idp-api.stackone.com/api/auth`. On first use your host opens the StackOne sign-in page. No API keys or secrets live in this repo.
+- **Auth:** OAuth 2.1 with PKCE against `https://idp-api.stackone.com/api/auth`. The server takes either kind of client the host brings: a URL-based client ID backed by a client ID metadata document, or one from dynamic client registration. On first use your host opens the StackOne sign-in page. No API keys or secrets live in this repo.
 - **Scopes:** `mcp`, `offline_access` (refresh tokens so you sign in once).
 - **Network endpoints this plugin calls:** `mcp.stackone.com` (the MCP server) and `idp-api.stackone.com` (sign-in). Nothing else.
 - **What runs locally:** nothing. No hooks, no scripts, no bundled binaries. The plugin is a manifest and a server URL.
