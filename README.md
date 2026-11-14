@@ -106,7 +106,7 @@ and [incremental OAuth consent](https://developers.openai.com/plugins/build/auth
 
 ## Authentication and data
 
-- **Auth:** OAuth 2.1 with PKCE and dynamic client registration against `https://idp-api.stackone.com/api/auth`. On first use your host opens the StackOne sign-in page. No API keys or secrets live in this repo.
+- **Auth:** OAuth 2.1 with PKCE against `https://idp-api.stackone.com/api/auth`. The server takes either kind of client the host brings: a URL-based client ID backed by a client ID metadata document, or one from dynamic client registration. On first use your host opens the StackOne sign-in page. No API keys or secrets live in this repo.
 - **Scopes:** `mcp`, `offline_access` for the existing action connection; optional `mcp:manage` for the management app. Opening management requests additional consent when needed.
 - **Endpoints:** `mcp.stackone.com` (MCP) and `idp-api.stackone.com` (sign-in). The management app embeds Hub from `app.stackone.com`; configuration links open the hosted dashboard.
 - **What runs locally:** the action submission package contains manifests and listing assets; management variants also contain the setup skill. The extension loads a sandboxed management app from the server. Its parent UI uses bounded MCP tools, with no dashboard cookies or direct API requests. Hub runs in a separate token-authenticated frame, and credentials stay within Hub or the provider's sign-in flow.
