@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "stackone": {
+      "serverUrl": "https://mcp.stackone.com/mcp"
+    }
+  }
+}
