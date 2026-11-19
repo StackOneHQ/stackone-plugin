@@ -31,18 +31,20 @@ The server exposes four tools:
 | `stackone_list_accounts` | List the accounts (Workday, Salesforce, Notion, Jira, …) linked to your session and their ids. |
 | `stackone_submit_feedback` | Report a tool result that was wrong or unhelpful. |
 
-Example prompts once connected:
+### Try it with your connected apps
 
-- "List the accounts I have connected through StackOne."
-- "Use StackOne to find my open Workday time-off requests."
-- "Create a Jira issue for the bug we just discussed, via StackOne."
+- “Which apps do I have connected through StackOne?”
+- “Use StackOne to show me the five most recently updated records in a connected app.”
+- “Help me update a record through StackOne. Show me the proposed change before saving it.”
+
+In Antigravity, you can also type `/stackone-actions` and describe a task. The [workflow](skills/stackone-actions/SKILL.md) finds actions available to your account, uses their input schemas, and previews changes for approval.
 
 ## Authentication and data
 
 - **Auth:** OAuth 2.1 with PKCE against `https://idp-api.stackone.com/api/auth`. The server takes either kind of client the host brings: a URL-based client ID backed by a client ID metadata document, or one from dynamic client registration. On first use your host opens the StackOne sign-in page. No API keys or secrets live in this repo.
 - **Scopes:** `mcp`, `offline_access` (refresh tokens so you sign in once).
 - **Network endpoints this plugin calls:** `mcp.stackone.com` (the MCP server) and `idp-api.stackone.com` (sign-in). Nothing else.
-- **What runs locally:** nothing. No hooks, no scripts, no bundled binaries. The plugin is a manifest and a server URL.
+- **What runs locally:** nothing. No hooks, no scripts, no bundled binaries. The bundled skill is Markdown. StackOne runs the actions on its hosted MCP server.
 - **Data:** actions run against the SaaS accounts you have linked in StackOne, under the permissions of that link. Privacy policy: <https://www.stackone.com/terms/privacy-policy/>. Terms: <https://www.stackone.com/terms/saas-terms/>.
 
 ## Repository layout
@@ -61,6 +63,7 @@ stackone-plugin/
 ├── mcp_config.json                 # server config read by Antigravity
 ├── mcp.json                        # server config read by Cursor
 ├── .mcp.json                       # server config read by Claude Code, Grok Build, Codex
+├── skills/stackone-actions/SKILL.md # Connected-app workflow
 ├── assets/logo.png, logo.svg
 └── scripts/check-manifests.py
 ```

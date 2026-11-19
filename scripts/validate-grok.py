@@ -33,7 +33,7 @@ elif servers[0].get("description") != "http":
     errors.append(f"xAI extractor sees transport {servers[0].get('description')!r}, expected 'http'")
 for k in ("hooks", "lspServers", "commands", "agents"):
     if extracted.get("components", {}).get(k):
-        errors.append(f"plugin unexpectedly ships {k}: {extracted['components'][k]} (this plugin is MCP-only)")
+        errors.append(f"plugin unexpectedly ships {k}: {extracted['components'][k]}")
 
 entry = json.loads((repo / "marketplace/xai-catalog-entry.json").read_text())
 sha = os.environ.get("GITHUB_SHA") or subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=repo, text=True).strip()

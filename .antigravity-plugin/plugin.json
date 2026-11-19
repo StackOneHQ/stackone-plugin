@@ -19,8 +19,8 @@
     "stackone actions"
   ],
   "suggestedPrompts": [
-    "Use StackOne to list the accounts I have connected.",
-    "Use StackOne to find and run the action that creates a Jira issue.",
-    "Use StackOne to pull my open Workday time-off requests."
+    "Which apps do I have connected through StackOne?",
+    "Use StackOne to show me the five most recently updated records in a connected app.",
+    "Help me update a record through StackOne. Show me the proposed change before saving it."
   ]
 }
