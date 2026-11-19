@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/StackOneHQ/stackone-plugin/compare/stackone-plugin-v1.1.0...stackone-plugin-v1.2.0) (2026-11-19)
+
+
+### Features
+
+* support the Google Antigravity plugin host ([#10](https://github.com/StackOneHQ/stackone-plugin/issues/10)) ([367c382](https://github.com/StackOneHQ/stackone-plugin/commit/367c382ee2385c544c558683efa1e1fca253554e))
+
 ## [1.1.0](https://github.com/StackOneHQ/stackone-plugin/compare/stackone-plugin-v1.0.0...stackone-plugin-v1.1.0) (2026-10-09)
 
 
