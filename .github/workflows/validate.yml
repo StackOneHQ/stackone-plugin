@@ -76,7 +76,7 @@ jobs:
         run: |
           claude plugin validate .claude-plugin/plugin.json
           claude plugin validate .claude-plugin/marketplace.json
-      - name: install from this repo as a marketplace and confirm the MCP server is detected
+      - name: install from this repo as a marketplace and confirm the skill and MCP server are detected
         env:
           CLAUDE_CONFIG_DIR: ${{ runner.temp }}/claude
         run: |
@@ -84,7 +84,8 @@ jobs:
           claude plugin install stackone@stackone
           claude plugin details stackone@stackone | tee details.txt
           grep -q "MCP servers (1)" details.txt
-          grep -q "Skills (0)" details.txt
+          grep -q "Skills (1)" details.txt
+          grep -q "stackone-actions" details.txt
 
   codex:
     name: Codex / ChatGPT (install from source)
