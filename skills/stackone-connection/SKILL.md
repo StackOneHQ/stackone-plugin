@@ -1,10 +1,6 @@
 ---
 name: stackone-connection
 description: Use when the user wants to connect or link an account, reconnect a broken or expired connector, choose between a connector's profiles before linking, or verify that a newly linked account works. Covers linking, reconnection, profile choice, and link diagnosis. Not for running a provider action on an already-working account.
-license: MIT
-metadata:
-  author: stackone
-  version: "1.0"
 ---
 
 # Connecting and setting up accounts
