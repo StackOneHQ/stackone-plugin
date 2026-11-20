@@ -44,7 +44,7 @@ In Antigravity, you can also type `/stackone-actions` and describe a task. The [
 - **Auth:** OAuth 2.1 with PKCE against `https://idp-api.stackone.com/api/auth`. The server takes either kind of client the host brings: a URL-based client ID backed by a client ID metadata document, or one from dynamic client registration. On first use your host opens the StackOne sign-in page. No API keys or secrets live in this repo.
 - **Scopes:** `mcp`, `offline_access` (refresh tokens so you sign in once).
 - **Network endpoints this plugin calls:** `mcp.stackone.com` (the MCP server) and `idp-api.stackone.com` (sign-in). Nothing else.
-- **What runs locally:** nothing. No hooks, no scripts, no bundled binaries. The bundled skill is Markdown. StackOne runs the actions on its hosted MCP server.
+- **What runs locally:** nothing. No hooks, no scripts, no bundled binaries. The bundled skills are Markdown. StackOne runs the actions on its hosted MCP server.
 - **Data:** actions run against the SaaS accounts you have linked in StackOne, under the permissions of that link. Privacy policy: <https://www.stackone.com/terms/privacy-policy/>. Terms: <https://www.stackone.com/terms/saas-terms/>.
 
 ## Repository layout
@@ -64,6 +64,7 @@ stackone-plugin/
 ├── mcp.json                        # server config read by Cursor
 ├── .mcp.json                       # server config read by Claude Code, Grok Build, Codex
 ├── skills/stackone-actions/SKILL.md # Connected-app workflow
+├── skills/stackone-connection/SKILL.md # Account linking and setup
 ├── assets/logo.png, logo.svg
 └── scripts/check-manifests.py
 ```

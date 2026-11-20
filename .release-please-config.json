@@ -13,7 +13,8 @@
         { "type": "json", "path": ".grok-plugin/plugin.json", "jsonpath": "$.version" },
         { "type": "json", "path": ".cursor-plugin/plugin.json", "jsonpath": "$.version" },
         { "type": "json", "path": ".codex-plugin/plugin.json", "jsonpath": "$.version" },
-        { "type": "json", "path": ".claude-plugin/marketplace.json", "jsonpath": "$.plugins[0].version" }
+        { "type": "json", "path": ".claude-plugin/marketplace.json", "jsonpath": "$.plugins[0].version" },
+        { "type": "json", "path": "package.json", "jsonpath": "$.version" }
       ]
     }
   }
