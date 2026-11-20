@@ -35,6 +35,35 @@ jobs:
           python3 -m zipfile --test dist/stackone-chatgpt-extension.zip
           python3 -m zipfile --test dist/stackone-claude-extension.zip
 
+  antigravity:
+    name: Google Antigravity (validate and install from source)
+    runs-on: ubuntu-latest
+    env:
+      AGY_CLI_DISABLE_AUTO_UPDATE: "true"
+      # Pinned from Google's CLI update manifest for linux_amd64.
+      AGY_BUILD: 1.5.11-6132547114106880
+      AGY_SHA512: dad3c015e8964fcdc1639b13b7152f4cb84cb1bde385707e2bcdf095d6f1831f4f6521199aec499cc052f9e99906b7fdbc52c273df064d5cb7c84b068ba3ce50
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Download and verify the Antigravity CLI
+        working-directory: ${{ runner.temp }}
+        run: |
+          curl --fail --silent --show-error --location --retry 3 \
+            "https://storage.googleapis.com/antigravity-public/antigravity-cli/$AGY_BUILD/linux-x64/cli_linux_x64.tar.gz" -o agy.tar.gz
+          echo "$AGY_SHA512  agy.tar.gz" | sha512sum --check
+          tar -xzf agy.tar.gz antigravity
+      - name: Validate the bundle and check the installed skill and MCP server
+        shell: bash
+        run: |
+          "$RUNNER_TEMP/antigravity" plugin validate --json . | jq -e '
+            .manifest == ".antigravity-plugin/plugin.json" and .components.mcpServers == 1 and .components.skills >= 1 and
+            all(.findings[]; .severity == "warning" and (.file == ".mcp.json" or .file == "mcp.json"))'
+          "$RUNNER_TEMP/antigravity" plugin install .
+          "$RUNNER_TEMP/antigravity" plugin list --json | jq -e '
+            any(.[]; .name == "stackone" and .enabled and .mcpServers == ["stackone"] and (.skills | index("stackone-actions") != null))'
+
   claude-code:
     name: Claude Code (claude plugin validate + install from source)
     runs-on: ubuntu-latest
@@ -61,7 +90,7 @@ jobs:
           python3 scripts/build-chatgpt-plugin.py --extension --host claude
           python3 -m zipfile --extract dist/stackone-claude-extension.zip "$RUNNER_TEMP/stackone-management"
           claude plugin validate "$RUNNER_TEMP/stackone-management"
-      - name: install from this repo as a marketplace and confirm the MCP server is detected
+      - name: install from this repo as a marketplace and confirm the skill and MCP server are detected
         env:
           CLAUDE_CONFIG_DIR: ${{ runner.temp }}/claude
         run: |
@@ -69,7 +98,8 @@ jobs:
           claude plugin install stackone@stackone
           claude plugin details stackone@stackone | tee details.txt
           grep -q "MCP servers (1)" details.txt
-          grep -q "Skills (0)" details.txt
+          grep -q "Skills (1)" details.txt
+          grep -q "stackone-actions" details.txt
 
   codex:
     name: Codex / ChatGPT (install from source)

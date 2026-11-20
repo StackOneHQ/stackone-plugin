@@ -34,9 +34,9 @@
     "composerIcon": "./assets/logo.png",
     "brandColor": "#047B43",
     "defaultPrompt": [
-      "Use StackOne to list the accounts I have connected.",
-      "Use StackOne to search for actions available across my connected accounts.",
-      "Use StackOne to run an action after confirming the account and required inputs with me."
+      "Which apps do I have connected through StackOne?",
+      "Use StackOne to show me the five most recently updated records in a connected app.",
+      "Help me update a record through StackOne. Show me the proposed change before saving it."
     ],
     "logoDark": "./assets/logo.png",
     "composerIconDark": "./assets/logo.png",

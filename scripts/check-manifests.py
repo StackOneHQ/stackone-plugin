@@ -12,12 +12,13 @@ root = pathlib.Path(__file__).resolve().parent.parent
 def load(p): return json.loads((root / p).read_text())
 
 manifests = {p: load(p) for p in [
+    ".antigravity-plugin/plugin.json",
     ".claude-plugin/plugin.json",
     ".grok-plugin/plugin.json",
     ".cursor-plugin/plugin.json",
     ".codex-plugin/plugin.json",
 ]}
-mcp_files = {p: load(p) for p in ["mcp.json", ".mcp.json"]}
+mcp_files = {p: load(p) for p in ["mcp.json", ".mcp.json", "mcp_config.json"]}
 markets = {p: load(p) for p in [".claude-plugin/marketplace.json", ".agents/plugins/marketplace.json"]}
 
 errors = []
@@ -35,6 +36,9 @@ for path, m in mcp_files.items():
     if list(servers) != ["stackone"]:
         errors.append(f"{path}: expected exactly one server named 'stackone', got {list(servers)}")
     for s in servers.values():
+        if path == "mcp_config.json":
+            urls.add(s.get("serverUrl"))
+            continue
         urls.add(s.get("url"))
         if s.get("type") != "http":
             errors.append(f"{path}: server type must be 'http'")
