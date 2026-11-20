@@ -10,6 +10,8 @@ new link all change account state. Each writes with the signed-in user's own per
 the current state first, make the one change that is needed, and make no write when the state you
 want already holds.
 
+If this session has no connector-profile or account-linking tools (such as `stackone_list_connector_profiles` or `stackone_link_account`), linking is not available here: tell the user to link the account in the StackOne dashboard at app.stackone.com, and do not attempt the steps below.
+
 ## Read before you write
 
 Find the thing before you touch it, and stop if it is already right.
