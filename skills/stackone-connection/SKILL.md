@@ -10,13 +10,13 @@ new link all change account state. Each writes with the signed-in user's own per
 the current state first, make the one change that is needed, and make no write when the state you
 want already holds.
 
-If this session has no connector-profile or account-linking tools (such as `stackone_list_connector_profiles` or `stackone_link_account`), linking is not available here: tell the user to link the account in the StackOne dashboard at app.stackone.com, and do not attempt the steps below.
+If this session has no connector-profile or account-linking tools (such as `stackone_get_connector_profiles` or `stackone_link_account`), linking is not available here: tell the user to link the account in the StackOne dashboard at app.stackone.com, and do not attempt the steps below.
 
 ## Read before you write
 
 Find the thing before you touch it, and stop if it is already right.
 
-- A profile: `stackone_list_connector_profiles {connector_key: ["<provider>"]}` or `stackone_get_connector_profile {id}`. `connector_key` is a list.
+- A profile: `stackone_get_connector_profiles {connector_key: ["<provider>"]}`, or `stackone_get_connector_profiles {id}` for one profile. `connector_key` is a list.
 - An account: `stackone_list_linked_accounts {providers}` or `stackone_get_account {id}`.
 
 If the account is already linked and authenticated, or the profile already enables the action, say
@@ -27,7 +27,7 @@ so and change nothing.
 A connector can have several profiles (for example a production and a sandbox one), and each links
 through different credentials and enables different actions.
 
-- List them with `stackone_list_connector_profiles {connector_key: ["<provider>"]}`. If more than one is active,
+- List them with `stackone_get_connector_profiles {connector_key: ["<provider>"]}`. If more than one is active,
   tell the user how they differ (name, environment, enabled action count) or ask what they need
   before linking.
 - Start the link with the chosen profile's `id`, passed as `connector_profile_id`. A bare
@@ -58,7 +58,7 @@ the same connector profile the account already uses, then confirming by re-readi
 
 - Read the broken account with `stackone_get_account {id}`. Its output names the provider and the
   profile (`integration_config_labels`), but not the profile id.
-- Look the profile up with `stackone_list_connector_profiles {connector_key: ["<the account's
+- Look the profile up with `stackone_get_connector_profiles {connector_key: ["<the account's
   provider>"]}` and match it by name to get its `id`.
 - Relink through that profile:
 
