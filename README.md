@@ -110,7 +110,7 @@ and [incremental OAuth consent](https://developers.openai.com/plugins/build/auth
 ## Authentication and data
 
 - **Auth:** OAuth 2.1 with PKCE against `https://idp-api.stackone.com/api/auth`. The server takes either kind of client the host brings: a URL-based client ID backed by a client ID metadata document, or one from dynamic client registration. On first use your host opens the StackOne sign-in page. No API keys or secrets live in this repo.
-- **Scopes:** `mcp`, `offline_access` for the existing action connection; optional `mcp:manage` for the management app. Opening management requests additional consent when needed.
+- **Scopes:** `mcp`, `offline_access` for the existing action connection and refresh tokens; optional `mcp:manage` for the management app. Opening management requests additional consent when needed.
 - **Endpoints:** `mcp.stackone.com` (MCP) and `idp-api.stackone.com` (sign-in). The management app embeds Hub from `app.stackone.com`; configuration links open the hosted dashboard.
 - **What runs locally:** source installs include the Markdown action workflow. The action submission ZIP contains manifests and listing assets; management variants also contain the setup skill. The extension loads a sandboxed management app from the server. Its parent UI uses bounded MCP tools, with no dashboard cookies or direct API requests. Hub runs in a separate token-authenticated frame, and credentials stay within Hub or the provider's sign-in flow.
 - **Data:** actions run against the SaaS accounts you have linked in StackOne, under the permissions of that link. Privacy policy: <https://www.stackone.com/terms/privacy-policy/>. Terms: <https://www.stackone.com/terms/saas-terms/>.
@@ -132,6 +132,7 @@ stackone-plugin/
 ├── mcp.json                        # server config read by Cursor
 ├── .mcp.json                       # server config read by Claude Code, Grok Build, Codex
 ├── skills/stackone-actions/SKILL.md # Connected-app workflow
+├── skills/stackone-connection/SKILL.md # Account linking and setup
 ├── assets/logo.png, logo.svg
 └── scripts/check-manifests.py
 ```

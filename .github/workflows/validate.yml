@@ -98,8 +98,9 @@ jobs:
           claude plugin install stackone@stackone
           claude plugin details stackone@stackone | tee details.txt
           grep -q "MCP servers (1)" details.txt
-          grep -q "Skills (1)" details.txt
+          grep -q "Skills (2)" details.txt
           grep -q "stackone-actions" details.txt
+          grep -q "stackone-connection" details.txt
 
   codex:
     name: Codex / ChatGPT (install from source)
